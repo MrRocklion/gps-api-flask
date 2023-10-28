@@ -30,15 +30,27 @@ def setPosition():
     args = request.args
     args.to_dict()
     id = args.get("id")
-    lat = args.get("lat")
-    lon = args.get("lon")
+    data = args.get("data")
+    string_empty = data.replace(" ", "")
+    string_formated = string_empty[9:].split(",")
+    print(string_formated)
+    grados_lat = string_formated[0][0:2]
+    grados_lon = string_formated[2][0:3]
+    minutos_lat = float(string_formated[0][2:])
+    minutos_lon = float(string_formated[2][3:])
+    latitud = int(grados_lat) + ((minutos_lat) / 60)
+    longitud =  int(grados_lon) + ((minutos_lon) / 60)
+    if string_formated[1] =="S":
+        latitud =  latitud*-1
+    if string_formated[3] =="W":
+        longitud =  longitud*-1
     device_ref = ref.child(id)
     device_ref.update({
-    'lat':lat,
-    'lon':lon
+    'lat':latitud,
+    'lon':longitud
     })
 
-    return jsonify({"data":"ok"})
+    return jsonify({"latitud":latitud,"longitud":longitud})
 
 
 
