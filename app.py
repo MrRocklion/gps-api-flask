@@ -53,6 +53,20 @@ def setPosition():
         })
     return jsonify({"latitud":latitud,"longitud":longitud})
 
+@app.route('/track',methods=['POST'])
+def setTrack():
+    args = request.args
+    args.to_dict()
+    id = args.get("id")
+    lat = args.get("lon")
+    lon = args.get("lat")
+    device_ref = ref.child(id)
+    device_ref.update({
+        'lat':lon,
+        'lon':lat
+        })
+    return jsonify({"latitud":lat,"longitud":lon})
+
 
 
 
