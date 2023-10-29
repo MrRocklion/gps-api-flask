@@ -58,8 +58,8 @@ def setTrack():
     args = request.args
     args.to_dict()
     id = args.get("id")
-    lat = args.get("lon")
-    lon = args.get("lat")
+    lat = args.get("lat")
+    lon = args.get("lon")
     device_ref = ref.child(id)
     device_ref.update({
         'lat':lon,
