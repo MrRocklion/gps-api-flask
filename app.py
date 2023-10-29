@@ -1,12 +1,12 @@
 from flask import Flask,jsonify,request
 import firebase_admin
 from firebase_admin import credentials
-from firebase_admin import db
+from firebase_admin import firestore
 cred = credentials.Certificate('credentials.json')
-firebase_admin.initialize_app(cred, {
-    'databaseURL': 'https://tracker-app-233e4-default-rtdb.firebaseio.com/'
-})
-ref = db.reference('dispositivos')
+app_firebase = firebase_admin.initialize_app(cred)
+
+db = firestore.client()
+
 app = Flask(__name__)
 
 
@@ -21,7 +21,10 @@ def ping():
 
 @app.route('/devices',methods=['GET'])
 def getDevices():
-    data = ref.get()
+    docs = db.collection("vehiculos").stream()
+    data = []
+    for doc in docs:
+        data.append(doc.to_dict())
     return jsonify({"data":data})
 
 @app.route('/update_device',methods=['POST'])
@@ -46,11 +49,11 @@ def setPosition():
             latitud =  latitud*-1
         if string_formated[3] =="W":
             longitud =  longitud*-1
-        device_ref = ref.child(id)
-        device_ref.update({
-        'lat':latitud,
-        'lon':longitud
-        })
+        devices = db.collection("cities").document("DC")
+        devices.update({
+            'lat':longitud,
+            'lon':latitud
+            })
     return jsonify({"latitud":latitud,"longitud":longitud})
 
 @app.route('/track',methods=['POST'])
@@ -60,8 +63,8 @@ def setTrack():
     id = args.get("id")
     lat = args.get("lat")
     lon = args.get("lon")
-    device_ref = ref.child(id)
-    device_ref.update({
+    devices = db.collection("vehiculos").document(id)
+    devices.update({
         'lat':lon,
         'lon':lat
         })
