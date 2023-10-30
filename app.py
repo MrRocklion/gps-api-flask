@@ -65,8 +65,8 @@ def setTrack():
     lon = args.get("lon")
     devices = db.collection("vehiculos").document(id)
     devices.update({
-        'lat':lon,
-        'lon':lat
+        'lat':lat,
+        'lon':lon
         })
     return jsonify({"latitud":lat,"longitud":lon})
 
